@@ -1,0 +1,49 @@
+<body>
+    <style>
+        div[data-page=template] {
+            display: none;
+        }
+    </style>
+    <div data-page="template" id="page1">
+        This is page 1
+        <a href="page2">Click here to load page 2</a>
+    </div>
+    <div data-page="template" id="page2">
+        This is page 2
+        <a href="default">Click here to load the default page</a>
+    </div>
+    <div data-page="template" id="default">
+        This is the default page
+        <hr/>
+        <a href="page1">Click here to load page 1</a>
+    </div>
+    <div data-page="content" id="content">
+    </div>
+    <script>
+        var rootURL = window.location.pathname;
+        var loadPage = function(id){
+            var nextPage = document.getElementById(id).innerHTML;
+            document.getElementById('content').innerHTML = nextPage;
+        };
+        var historyLog = function(id){
+           var state = { id: id };
+           history.pushState(state, state.id, rootURL+state.id);
+           loadPage(state.id);
+        };
+        
+        historyLog('default');
+        
+        window.addEventListener('popstate', function(event){
+            loadPage(event.state.id);
+        });
+        
+        document.getElementsByTagName('body')[0].addEventListener(
+        'click', 
+        function(event){ 
+            event.preventDefault();
+            if (event.target.nodeName == 'A'){
+                historyLog(event.target.getAttribute('href'));
+            }
+        });
+    </script>
+</body>
